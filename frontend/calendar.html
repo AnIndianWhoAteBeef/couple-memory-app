@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>캘린더</title>
+
+<style>
+
+body{
+
+text-align:center;
+font-family:sans-serif;
+
+}
+
+.calendar{
+
+display:grid;
+grid-template-columns:repeat(7,1fr);
+
+gap:10px;
+
+margin:40px;
+
+}
+
+.day{
+
+padding:20px;
+
+background:#ffeef3;
+
+border-radius:10px;
+
+cursor:pointer;
+
+}
+
+#recordBox{
+
+display:none;
+
+margin:20px;
+
+}
+
+img{
+
+max-width:200px;
+
+margin-top:10px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>📅 우리의 날짜</h1>
+
+<div class="calendar" id="calendar"></div>
+
+<div id="recordBox">
+
+<h3 id="selectedDate"></h3>
+
+<input type="file" id="photo">
+
+<br><br>
+
+<textarea id="text"
+placeholder="오늘 기록 작성"
+rows="4"
+cols="30"></textarea>
+
+<br><br>
+
+<button onclick="saveRecord()">저장</button>
+
+<div id="preview"></div>
+
+</div>
+
+<script>
+
+const calendar=document.getElementById("calendar");
+let currentDay=null;
+
+for(let i=1;i<=30;i++){
+
+const day=document.createElement("div");
+
+day.className="day";
+
+day.innerText=i+"일";
+
+day.addEventListener("click",()=>{
+
+currentDay=i;
+
+document.getElementById("recordBox").style.display="block";
+
+document.getElementById("selectedDate").innerText=i+"일 기록";
+
+loadRecord();
+
+});
+
+calendar.appendChild(day);
+
+}
+
+function saveRecord(){
+
+const text=document.getElementById("text").value;
+
+const photo=document.getElementById("photo").files[0];
+
+if(photo){
+
+const reader=new FileReader();
+
+reader.onload=function(){
+
+localStorage.setItem(
+
+"record_"+currentDay,
+
+JSON.stringify({
+
+text:text,
+
+image:reader.result
+
+})
+
+);
+
+alert("저장 완료!");
+
+loadRecord();
+
+};
+
+reader.readAsDataURL(photo);
+
+}else{
+
+localStorage.setItem(
+
+"record_"+currentDay,
+
+JSON.stringify({
+
+text:text
+
+})
+
+);
+
+alert("저장 완료!");
+
+}
+
+}
+
+function loadRecord(){
+
+const data=localStorage.getItem(
+
+"record_"+currentDay
+
+);
+
+const preview=document.getElementById("preview");
+
+preview.innerHTML="";
+
+document.getElementById("text").value="";
+
+if(data){
+
+const record=JSON.parse(data);
+
+document.getElementById("text").value=
+
+record.text || "";
+
+if(record.image){
+
+const img=document.createElement("img");
+
+img.src=record.image;
+
+preview.appendChild(img);
+
+}
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
