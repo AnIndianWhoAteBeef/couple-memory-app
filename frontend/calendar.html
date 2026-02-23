@@ -95,17 +95,35 @@ const day=document.createElement("div");
 
 day.className="day";
 
-day.innerText=i+"일";
+let text=i+"일";
+
+// 기록 확인
+const record=localStorage.getItem("record_"+i);
+
+if(record){
+
+text+=" ❤️";
+
+}
+
+// 일정 확인
+const schedule=localStorage.getItem("schedule_"+i);
+
+if(schedule){
+
+const data=JSON.parse(schedule);
+
+text+=" "+data.emoji;
+
+}
+
+day.innerText=text;
 
 day.addEventListener("click",()=>{
 
 currentDay=i;
 
-document.getElementById("recordBox").style.display="block";
-
-document.getElementById("selectedDate").innerText=i+"일 기록";
-
-loadRecord();
+showMenu();
 
 });
 
@@ -200,6 +218,66 @@ preview.appendChild(img);
 }
 
 }
+
+}
+
+function showMenu(){
+
+const choice=prompt(
+
+"선택하세요\n1 기록 작성\n2 일정 추가"
+
+);
+
+if(choice==="1"){
+
+document.getElementById("recordBox").style.display="block";
+
+document.getElementById("selectedDate").innerText=
+
+currentDay+"일 기록";
+
+loadRecord();
+
+}
+
+if(choice==="2"){
+
+addSchedule();
+
+}
+
+}
+
+function addSchedule(){
+
+const emoji=prompt(
+
+"이모지 입력\n예 ❤️ 🎂 ✈️"
+
+);
+
+const title=prompt("일정 내용");
+
+if(!emoji || !title)return;
+
+localStorage.setItem(
+
+"schedule_"+currentDay,
+
+JSON.stringify({
+
+emoji:emoji,
+
+title:title
+
+})
+
+);
+
+alert("일정 저장!");
+
+location.reload();
 
 }
 
