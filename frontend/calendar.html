@@ -223,13 +223,143 @@ preview.appendChild(img);
 
 function showMenu(){
 
-const choice=prompt(
+const record=
 
-"선택하세요\n1 기록 작성\n2 일정 추가"
+localStorage.getItem(
+
+"record_"+currentDay
 
 );
 
-if(choice==="1"){
+const schedule=
+
+localStorage.getItem(
+
+"schedule_"+currentDay
+
+);
+
+// ⭐ 이미 있는 경우 보기
+if(record || schedule){
+
+showDetail();
+
+return;
+
+}
+
+dateDiv.addEventListener("click", () => {
+
+  selectedDate = date;
+
+  modal.classList.remove("hidden");
+
+  modalDate.textContent =
+    `${currentYear}-${currentMonth+1}-${date}`;
+
+  const saved = diaryData[selectedDate];
+
+  if(saved){
+
+    diaryText.value = saved.text;
+    selectedEmoji = saved.emoji;
+
+  }else{
+
+    diaryText.value = "";
+    selectedEmoji = "";
+
+  }
+
+});
+
+}
+
+function addSchedule(){
+
+const emojiList=[
+
+{emoji:"❤️",title:"데이트"},
+
+{emoji:"🎂",title:"생일"},
+
+{emoji:"✈️",title:"여행"},
+
+{emoji:"🍿",title:"영화"}
+
+];
+
+let message="일정 선택하세요\n";
+
+emojiList.forEach((e,index)=>{
+
+message+=(index+1)+". "+e.emoji+" "+e.title+"\n";
+
+});
+
+const choice=prompt(message);
+
+const selected=emojiList[choice-1];
+
+if(!selected)return;
+
+localStorage.setItem(
+
+"schedule_"+currentDay,
+
+JSON.stringify(selected)
+
+);
+
+alert("일정 저장!");
+
+location.reload();
+
+}
+
+function showDetail(){
+
+let message=currentDay+"일\n";
+
+const schedule=
+
+localStorage.getItem(
+
+"schedule_"+currentDay
+
+);
+
+if(schedule){
+
+const data=JSON.parse(schedule);
+
+message+=data.emoji+" "+data.title+"\n";
+
+}
+
+const record=
+
+localStorage.getItem(
+
+"record_"+currentDay
+
+);
+
+if(record){
+
+const data=JSON.parse(record);
+
+message+="\n기록:\n"+(data.text||"");
+
+}
+
+const edit=confirm(
+
+message+"\n\n수정할까요?"
+
+);
+
+if(edit){
 
 document.getElementById("recordBox").style.display="block";
 
@@ -241,45 +371,32 @@ loadRecord();
 
 }
 
-if(choice==="2"){
+}
 
-addSchedule();
+saveBtn.addEventListener("click",()=>{
+
+  if(diaryData[date]){
+
+  const emoji =
+    document.createElement("div");
+
+  emoji.textContent =
+    diaryData[date].emoji;
+
+  dateDiv.appendChild(emoji);
 
 }
 
-}
+  localStorage.setItem(
+    "diary",
+    JSON.stringify(diaryData)
+  );
 
-function addSchedule(){
+  modal.classList.add("hidden");
 
-const emoji=prompt(
+  renderCalendar();
 
-"이모지 입력\n예 ❤️ 🎂 ✈️"
-
-);
-
-const title=prompt("일정 내용");
-
-if(!emoji || !title)return;
-
-localStorage.setItem(
-
-"schedule_"+currentDay,
-
-JSON.stringify({
-
-emoji:emoji,
-
-title:title
-
-})
-
-);
-
-alert("일정 저장!");
-
-location.reload();
-
-}
+});
 
 </script>
 
