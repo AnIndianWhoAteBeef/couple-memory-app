@@ -80,6 +80,10 @@ cols="30"></textarea>
 
 <button onclick="saveRecord()">저장</button>
 
+<button onclick="addSchedule()">
+일정 추가
+</button>
+
 <div id="preview"></div>
 
 </div>
@@ -181,6 +185,8 @@ text:text
 
 alert("저장 완료!");
 
+loadRecord();
+
 }
 
 }
@@ -224,22 +230,16 @@ preview.appendChild(img);
 function showMenu(){
 
 const record=
-
 localStorage.getItem(
-
 "record_"+currentDay
-
 );
 
 const schedule=
-
 localStorage.getItem(
-
 "schedule_"+currentDay
-
 );
 
-// ⭐ 이미 있는 경우 보기
+// 이미 기록 있으면 보기
 if(record || schedule){
 
 showDetail();
@@ -248,30 +248,16 @@ return;
 
 }
 
-dateDiv.addEventListener("click", () => {
+// 없으면 입력창 열기
+document.getElementById(
+"recordBox"
+).style.display="block";
 
-  selectedDate = date;
+document.getElementById(
+"selectedDate"
+).innerText=currentDay+"일 기록";
 
-  modal.classList.remove("hidden");
-
-  modalDate.textContent =
-    `${currentYear}-${currentMonth+1}-${date}`;
-
-  const saved = diaryData[selectedDate];
-
-  if(saved){
-
-    diaryText.value = saved.text;
-    selectedEmoji = saved.emoji;
-
-  }else{
-
-    diaryText.value = "";
-    selectedEmoji = "";
-
-  }
-
-});
+loadRecord();
 
 }
 
@@ -372,31 +358,6 @@ loadRecord();
 }
 
 }
-
-saveBtn.addEventListener("click",()=>{
-
-  if(diaryData[date]){
-
-  const emoji =
-    document.createElement("div");
-
-  emoji.textContent =
-    diaryData[date].emoji;
-
-  dateDiv.appendChild(emoji);
-
-}
-
-  localStorage.setItem(
-    "diary",
-    JSON.stringify(diaryData)
-  );
-
-  modal.classList.add("hidden");
-
-  renderCalendar();
-
-});
 
 </script>
 
